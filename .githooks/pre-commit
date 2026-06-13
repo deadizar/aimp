@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+log_file="$repo_root/.git/.aimp-safe-write-log.json"
+guard_mode="${AIMP_SAFE_WRITE_GUARD_MODE:-$(git config --local --get aimp.safeWriteGuardMode || echo strict)}"
+
+if [[ "$guard_mode" != "strict" && "$guard_mode" != "warn" ]]; then
+  echo "ERROR: invalid guard mode '$guard_mode' (expected: strict|warn)" >&2
+  exit 1
+fi
+
+# Guard scope: docs and prompt artifacts that must follow the safe-write routine.
+mapfile -t staged_files < <(git diff --cached --name-only --diff-filter=ACMR)
+target_files=()
+for file in "${staged_files[@]}"; do
+  if [[ "$file" == src/docu/* || "$file" == src/main/resources/prompts/* ]]; then
+    target_files+=("$file")
+  fi
+done
+
+if [[ ${#target_files[@]} -eq 0 ]]; then
+  exit 0
+fi
+
+if [[ ! -f "$log_file" ]]; then
+  echo "INFO: Missing safe-write verification log: $log_file" >&2
+  echo "INFO: Auto-registering staged doc/prompt files for this commit." >&2
+
+  if ! node - "$repo_root" "$log_file" "${target_files[@]}" <<'NODE'
+const fs = require("node:fs");
+const path = require("node:path");
+const crypto = require("node:crypto");
+const { spawnSync } = require("node:child_process");
+
+const repoRoot = process.argv[2];
+const logFile = process.argv[3];
+const files = process.argv.slice(4);
+
+const entries = {};
+for (const file of files) {
+  const show = spawnSync("git", ["-C", repoRoot, "show", `:${file}`], { encoding: "buffer" });
+  if (show.status !== 0) {
+    const stderrText = Buffer.isBuffer(show.stderr) ? show.stderr.toString("utf8") : String(show.stderr || "");
+    throw new Error(`Cannot read staged blob for ${file}: ${stderrText.trim()}`);
+  }
+  const content = Buffer.isBuffer(show.stdout) ? show.stdout : Buffer.from(show.stdout || "", "utf8");
+  entries[file] = {
+    sha256: crypto.createHash("sha256").update(content).digest("hex"),
+    bytes: content.length,
+    verifiedAt: new Date().toISOString(),
+    mode: "pre-commit-autoregister"
+  };
+}
+
+const payload = {
+  version: 1,
+  updatedAt: new Date().toISOString(),
+  entries
+};
+
+fs.mkdirSync(path.dirname(logFile), { recursive: true });
+fs.writeFileSync(logFile, JSON.stringify(payload, null, 2) + "\n", "utf8");
+NODE
+  then
+    if [[ "$guard_mode" == "warn" ]]; then
+      echo "WARN: Auto-register failed. Continuing because mode=warn." >&2
+      echo "pre-commit: safe-write guard WARN (${#target_files[@]} files, mode=warn)"
+      exit 0
+    fi
+    echo "ERROR: Failed to auto-register safe-write log. Run verification manually:" >&2
+    echo "  node src/docu/scripts/PyScripts/session/safe-write.mjs --verify <file>" >&2
+    exit 1
+  fi
+fi
+
+tmp_file="$(mktemp)"
+trap 'rm -f "$tmp_file"' EXIT
+
+for file in "${target_files[@]}"; do
+  staged_sha="$(git show ":$file" | sha256sum | awk '{print $1}')"
+  staged_bytes="$(git show ":$file" | wc -c | tr -d ' ')"
+  printf '%s\t%s\t%s\n' "$file" "$staged_sha" "$staged_bytes" >> "$tmp_file"
+done
+
+AIMP_SAFE_WRITE_GUARD_MODE_EFFECTIVE="$guard_mode" node - "$log_file" "$tmp_file" <<'NODE'
+const fs = require("node:fs");
+
+const logFile = process.argv[2];
+const checksFile = process.argv[3];
+
+let logData;
+try {
+  logData = JSON.parse(fs.readFileSync(logFile, "utf8"));
+} catch (error) {
+  console.error(`ERROR: Cannot parse safe-write log at ${logFile}: ${error.message}`);
+  process.exit(1);
+}
+
+const entries = (logData && typeof logData === "object" && logData.entries && typeof logData.entries === "object")
+  ? logData.entries
+  : {};
+
+const lines = fs.readFileSync(checksFile, "utf8").split(/\r?\n/).filter(Boolean);
+const failures = [];
+for (const line of lines) {
+  const [file, sha256, bytes] = line.split("\t");
+  const record = entries[file];
+  if (!record) {
+    failures.push(`${file}: missing verification entry`);
+    continue;
+  }
+  if (record.sha256 !== sha256) {
+    failures.push(`${file}: sha256 mismatch (staged=${sha256}, logged=${record.sha256 || "<none>"})`);
+    continue;
+  }
+  if (String(record.bytes) !== String(bytes)) {
+    failures.push(`${file}: bytes mismatch (staged=${bytes}, logged=${record.bytes || "<none>"})`);
+  }
+}
+
+if (failures.length > 0) {
+  const guardMode = process.env.AIMP_SAFE_WRITE_GUARD_MODE_EFFECTIVE || "strict";
+  const isWarnMode = guardMode === "warn";
+  console.error(`${isWarnMode ? "WARN" : "ERROR"}: safe-write guard failed for staged files:`);
+  for (const failure of failures) {
+    console.error(` - ${failure}`);
+  }
+  console.error(`${isWarnMode ? "WARN" : "ERROR"}: Fix by re-verifying each affected file, then re-stage:`);
+  console.error(`${isWarnMode ? "WARN" : "ERROR"}:   node src/docu/scripts/PyScripts/session/safe-write.mjs --verify <file>`);
+  process.exit(isWarnMode ? 0 : 1);
+}
+NODE
+
+
+echo "pre-commit: safe-write guard PASS (${#target_files[@]} files, mode=$guard_mode)"
+
