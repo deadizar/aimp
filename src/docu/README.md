@@ -12,6 +12,11 @@ This directory centralizes reusable process and session documentation for this r
 - `src/docu/scripts/PyScripts/` - archived scripts and script documentation.
 - `src/docu/skills/` - recurring-pattern tracking for future skill extraction.
 
+## Session logs (latest)
+- [2026-06-14 — Bootstrap + Plan Maestro v0.1→v0.2](daily/2026/06/ses_2026-06-14.md)
+- [ToDo 2026-06-14](ToDo/2026/06/ses_2026-06-14_next.md)
+- [Plan Maestro v0.1→v0.2](planLogs/main/2026-06/14-master-plan.md)
+
 ## Session checklist links
 - Session start protocol: `src/main/resources/prompts/WarmUpJava.md`
 - Session end protocol: `src/main/resources/prompts/WarmUpJava.md`
