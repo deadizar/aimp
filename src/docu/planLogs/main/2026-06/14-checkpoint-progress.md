@@ -8,16 +8,16 @@
 
 ## Estado de checkpoints
 
-- [ ] CP-01 | Pendiente | Phase 0 completa — `./gradlew build` PASS
-- [ ] CP-02 | Pendiente | Phase 1 completa — `./gradlew test` PASS (domain model)
-- [ ] CP-03 | Pendiente | Phase 2 completa — `./gradlew test` PASS (providers)
-- [ ] CP-04 | Pendiente | Phase 3 completa — Settings UI visible en IDE
-- [ ] CP-05 | Pendiente | Phase 4 completa — Chat funcional en ToolWindow
-- [ ] CP-06 | Pendiente | Phase 5 completa — .tex exportado y compilable
-- [ ] CP-07 | Pendiente | Phase 6 completa — Image/TTS/STT integrados
-- [ ] CP-08 | Pendiente | Phase 7 completa — Decisión chatplayground.ai documentada
-- [ ] CP-09 | Pendiente | Phase 8 completa — chatplayground.ai provider (condicional)
-- [ ] CP-10 | Pendiente | Phase 9 completa — `./gradlew verifyPlugin` PASS
+- [x] CP-01 | PASS | 2026-06-14 02:09 | Phase 0 completada; `./gradlew build` OK tras el rename base y el bootstrap del build
+- [x] CP-02 | PASS | 2026-06-14 02:10 | Phase 1 completada; `./gradlew test` OK con el modelo de dominio y el repositorio JSON
+- [x] CP-03 | PASS | 2026-06-14 03:01 | Phase 2 completada; `./gradlew test` OK con providers 1min.ai y OpenAI-compatible + tests MockWebServer
+- [x] CP-04 | PASS | 2026-06-14 03:36 | Phase 3 completada; Settings UI (`AiManagerConfigurable`) registrada y persistencia + PasswordSafe operativos
+- [x] CP-05 | PASS | 2026-06-14 03:36 | Phase 4 completada; ToolWindow funcional con historial/chat/agent bar y servicio de aplicación
+- [x] CP-06 | PASS | 2026-06-14 03:36 | Phase 5 completada; exportación `.tex` implementada con modos full/assistant y tests de export
+- [x] CP-07 | PASS | 2026-06-14 03:36 | Phase 6 completada; IMAGE/TTS/STT integrados en UI y cubiertos en tests del provider 1min.ai
+- [x] CP-08 | PASS | 2026-06-14 03:36 | Phase 7 completada; spike documentado en `src/docu/learned/intellij/chatplayground-api-spike.md` con decisión defer
+- [x] CP-09 | PASS | 2026-06-14 03:36 | Phase 8 condicional no ejecutada por decisión de Phase 7 (defer explícito y trazable)
+- [x] CP-10 | PASS | 2026-06-14 03:36 | Phase 9 completada; `./gradlew verifyPlugin` y `./gradlew buildPlugin` en PASS
 
 ---
 
@@ -34,4 +34,3 @@ o en caso de fallo:
 ```
 - [ ] CP-xx | FAIL | 2026-06-DD HH:MM | {razón del fallo}
 ```
-

@@ -1,17 +1,4 @@
-package com.github.deadizar.aimp.services
+package com.github.deadizar.aimanager.services
 
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.project.Project
-import com.github.deadizar.aimp.MyBundle
-
-@Service(Service.Level.PROJECT)
-class MyProjectService(project: Project) {
-
-    init {
-        thisLogger().info(MyBundle["projectService", project.name])
-        thisLogger().warn("Don't forget to remove all non-needed sample code files with their corresponding registration entries in `plugin.xml`.")
-    }
-
-    fun getRandomNumber() = (1..100).random()
-}
+// Legacy file retained during the package migration. The active service lives in
+// `src/main/kotlin/com/github/deadizar/aimanager/services/AiManagerProjectService.kt`.

@@ -1,12 +1,4 @@
-package com.github.deadizar.aimp.startup
+package com.github.deadizar.aimanager.startup
 
-import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.ProjectActivity
-
-class MyProjectActivity : ProjectActivity {
-
-    override suspend fun execute(project: Project) {
-        thisLogger().warn("Don't forget to remove all non-needed sample code files with their corresponding registration entries in `plugin.xml`.")
-    }
-}
+// Legacy file retained during the package migration. The active startup activity lives in
+// `src/main/kotlin/com/github/deadizar/aimanager/startup/AiManagerStartupActivity.kt`.

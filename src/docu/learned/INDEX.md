@@ -17,4 +17,4 @@ When adding a new learned note:
 
 ## Recent entries
 - 2026-06-14 - Bootstrap index created for migration from s4d8 routines.
-
+- 2026-06-14 - chatplayground.ai viability spike decision (deferred) - `src/docu/learned/intellij/chatplayground-api-spike.md`.

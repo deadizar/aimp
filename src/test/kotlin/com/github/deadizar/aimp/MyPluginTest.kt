@@ -1,39 +1,24 @@
-package com.github.deadizar.aimp
+package com.github.deadizar.aimanager
 
-import com.intellij.ide.highlighter.XmlFileType
-import com.intellij.openapi.components.service
-import com.intellij.psi.xml.XmlFile
-import com.intellij.testFramework.TestDataPath
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.util.PsiErrorElementUtil
-import com.github.deadizar.aimp.services.MyProjectService
+import com.github.deadizar.aimanager.core.session.SessionManager
+import com.github.deadizar.aimanager.core.session.SessionRepository
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import java.nio.file.Files
 
-@TestDataPath("\$CONTENT_ROOT/src/test/testData")
-class MyPluginTest : BasePlatformTestCase() {
+class AiManagerPluginTest {
 
-    fun testXMLFile() {
-        val psiFile = myFixture.configureByText(XmlFileType.INSTANCE, "<foo>bar</foo>")
-        val xmlFile = assertInstanceOf(psiFile, XmlFile::class.java)
+    @Test
+    fun sessionManagerCreatesAndClosesSessions() {
+        val manager = SessionManager(SessionRepository(Files.createTempDirectory("aimanager-plugin-test")))
 
-        assertFalse(PsiErrorElementUtil.hasErrors(project, xmlFile.virtualFile))
+        val created = manager.newSession("Smoke test session").getOrThrow()
+        assertNotNull(manager.activeSession)
+        assertEquals("Smoke test session", created.title)
 
-        assertNotNull(xmlFile.rootTag)
-
-        xmlFile.rootTag?.let {
-            assertEquals("foo", it.name)
-            assertEquals("bar", it.value.text)
-        }
+        assertTrue(manager.closeSession().isSuccess)
+        assertEquals(null, manager.activeSession)
     }
-
-    fun testRename() {
-        myFixture.testRename("foo.xml", "foo_after.xml", "a2")
-    }
-
-    fun testProjectService() {
-        val projectService = project.service<MyProjectService>()
-
-        assertNotSame(projectService.getRandomNumber(), projectService.getRandomNumber())
-    }
-
-    override fun getTestDataPath() = "src/test/testData/rename"
 }

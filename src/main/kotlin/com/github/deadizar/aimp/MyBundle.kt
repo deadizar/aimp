@@ -1,23 +1,4 @@
-package com.github.deadizar.aimp
+package com.github.deadizar.aimanager
 
-import com.intellij.DynamicBundle
-import org.jetbrains.annotations.NonNls
-import org.jetbrains.annotations.PropertyKey
-
-@NonNls
-private const val BUNDLE = "messages.MyBundle"
-
-object MyBundle : DynamicBundle(BUNDLE) {
-
-    operator fun get(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any) =
-        getMessage(key, *params)
-
-    @JvmStatic
-    fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any) =
-        getMessage(key, *params)
-
-    @Suppress("unused")
-    @JvmStatic
-    fun messagePointer(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any) =
-        getLazyMessage(key, *params)
-}
+// Legacy file retained during the package migration. The active bundle lives in
+// `src/main/kotlin/com/github/deadizar/aimanager/AiManagerBundle.kt`.
