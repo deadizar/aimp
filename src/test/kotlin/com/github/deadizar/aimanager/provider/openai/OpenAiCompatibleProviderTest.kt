@@ -79,7 +79,7 @@ class OpenAiCompatibleProviderTest {
             val chatResult = provider.chat(
                 ChatRequest(
                     modelId = "gpt-4o-mini",
-                    messages = listOf(Message(MessageRole.USER, "hi")),
+                    messages = listOf(Message(role = MessageRole.USER, content = "hi")),
                 ),
             ).getOrThrow()
             assertEquals("hello from openai", chatResult.content)

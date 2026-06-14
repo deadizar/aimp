@@ -16,11 +16,15 @@ class AiManagerSettingsState : PersistentStateComponent<AiManagerSettingsState.S
         var defaultModel: String = "gpt-4o",
         var apiKeyRef: String = "aimanager:default-onemin",
         var capabilitiesCsv: String = "CHAT,IMAGE,TTS,STT",
+        var maxRetries: Int = 3,
+        var connectTimeoutSec: Int = 10,
+        var readTimeoutSec: Int = 60,
     )
 
     data class State(
         var providers: MutableList<ProviderEntry> = mutableListOf(ProviderEntry()),
         var activeProviderInstanceId: String = "default-onemin",
+        var fallbackProviderInstanceIds: List<String> = emptyList(),
     )
 
     private var currentState = State()

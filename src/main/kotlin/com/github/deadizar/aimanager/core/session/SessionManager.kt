@@ -42,5 +42,35 @@ class SessionManager(
     fun closeSession(): Result<Unit> = runCatching {
         activeSession = null
     }
+
+    fun renameSession(sessionId: String, newTitle: String): Result<Session> = runCatching {
+        val current = repository.load(sessionId).getOrThrow() ?: error("Session not found: $sessionId")
+        val updated = current.copy(title = newTitle, updatedAt = System.currentTimeMillis())
+        repository.save(updated).getOrThrow()
+        if (activeSession?.id == sessionId) activeSession = updated
+        updated
+    }
+
+    fun togglePin(sessionId: String): Result<Session> = runCatching {
+        val current = repository.load(sessionId).getOrThrow() ?: error("Session not found: $sessionId")
+        val updated = current.copy(pinned = !current.pinned, updatedAt = System.currentTimeMillis())
+        repository.save(updated).getOrThrow()
+        if (activeSession?.id == sessionId) activeSession = updated
+        updated
+    }
+
+    fun deleteSession(sessionId: String): Result<Unit> = runCatching {
+        repository.delete(sessionId).getOrThrow()
+        if (activeSession?.id == sessionId) activeSession = null
+    }
+
+    fun searchSessions(query: String): Result<List<Session>> = runCatching {
+        repository.list().getOrThrow().filter { it.title.contains(query, ignoreCase = true) }
+    }
+
+    fun truncateAfterMessage(session: Session, messageId: String): Result<Session> = runCatching {
+        val messages = session.messages.takeWhile { it.id != messageId }
+        session.copy(messages = messages, updatedAt = System.currentTimeMillis())
+    }
 }
 

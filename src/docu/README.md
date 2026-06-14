@@ -14,6 +14,7 @@ This directory centralizes reusable process and session documentation for this r
 
 ## Session logs (latest)
 - [2026-06-14 — Bootstrap + Plan Maestro v0.1→v0.2](daily/2026/06/ses_2026-06-14.md)
+- [2026-06-14 — Implementación final subplanes](daily/2026/06/ses_2026-06-14_final.md)
 - [ToDo 2026-06-14](ToDo/2026/06/ses_2026-06-14_next.md)
 - [Plan Maestro v0.1→v0.2](planLogs/main/2026-06/14-master-plan.md)
 

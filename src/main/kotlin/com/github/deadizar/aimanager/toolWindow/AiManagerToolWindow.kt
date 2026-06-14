@@ -16,7 +16,7 @@ class AiManagerToolWindow(
 
     private val chatPanel = ChatPanel(service, agentBar::selectedProviderInstanceId, agentBar::selectedModelId)
 
-    private val historyPanel = HistoryPanel { session ->
+    private val historyPanel = HistoryPanel(service) { session ->
         service.loadSession(session.id)
         chatPanel.renderSession(service.activeSession())
     }

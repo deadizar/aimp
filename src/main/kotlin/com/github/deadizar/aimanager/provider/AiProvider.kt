@@ -1,6 +1,8 @@
 package com.github.deadizar.aimanager.provider
 
 import com.github.deadizar.aimanager.core.model.Message
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 interface AiProvider {
     val config: ProviderConfig
@@ -19,6 +21,11 @@ interface AiProvider {
 
     suspend fun speechToText(modelId: String, audio: ByteArray): Result<String> =
         Result.failure(UnsupportedOperationException("STT is not supported by provider ${config.id}"))
+
+    suspend fun chatStream(request: ChatRequest): Flow<String> = flow {
+        val result = chat(request).getOrThrow()
+        emit(result.content)
+    }
 }
 
 data class ChatRequest(

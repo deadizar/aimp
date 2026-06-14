@@ -65,7 +65,7 @@ class OneMinProviderTest {
             val chatResult = provider.chat(
                 ChatRequest(
                     modelId = "gpt-4o",
-                    messages = listOf(Message(MessageRole.USER, "hello")),
+                    messages = listOf(Message(role = MessageRole.USER, content = "hello")),
                 ),
             ).getOrThrow()
             assertEquals("hello from 1min", chatResult.content)

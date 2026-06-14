@@ -15,5 +15,8 @@ data class ProviderConfig(
     val apiKey: String,
     val defaultModel: String = "gpt-4o",
     val capabilities: Set<ProviderCapability> = setOf(ProviderCapability.CHAT),
+    val retryPolicy: RetryPolicy = RetryPolicy(),
+    val connectTimeoutMs: Long = 10_000L,
+    val readTimeoutMs: Long = 60_000L,
 )
 

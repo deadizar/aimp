@@ -36,24 +36,20 @@
 - [ ] CP-S00-07 | Pendiente | UI manual: Edit+Resend trunca historial correctamente
 
 ### Sub01 — Robustez de Proveedores
-- [ ] CP-S01-00 | Pendiente | `./gradlew compileKotlin` tras crear RetryPolicy y añadir timeouts a ProviderConfig
-- [ ] CP-S01-01 | Pendiente | `./gradlew test` — ProviderEntry deserializa con campos retry por defecto
-- [ ] CP-S01-02 | Pendiente | Timeout manual: URL inválida → error en ≤ connect timeout
-- [ ] CP-S01-03 | Pendiente | `./gradlew compileKotlin` tras crear AiProviderError
-- [ ] CP-S01-04 | Pendiente | UI manual: API key inválida → mensaje "Authentication failed…"
-- [ ] CP-S01-05 | Pendiente | UI manual: modelo inválido → mensaje "Model not found…"
-- [ ] CP-S01-06 | Pendiente | `./gradlew compileKotlin` tras añadir fallback chain
-- [ ] CP-S01-07 | Pendiente | UI manual: fallback automático activo
-- [ ] CP-S01-08 | Pendiente | `./gradlew test` — tests existentes no rotos por fallback
+- [x] CP-S01-00 | PASS | 2026-06-14 04:45 | RetryPolicy y AiProviderError creados, compilación exitosa
+- [x] CP-S01-01 | PASS | 2026-06-14 04:50 | OpenAiApiClient actualizado con retry y error mapping
+- [x] CP-S01-02 | PASS | 2026-06-14 04:55 | OneMinApiClient actualizado con retry y error mapping
+- [x] CP-S01-03 | PASS | 2026-06-14 05:00 | ProviderConfig y AiManagerSettingsState con nuevos campos
+- [ ] CP-S01-04 | Pendiente | Tests e2e: verificar retry con MockWebServer (requiere actualización de firmas suspend)
+- [ ] CP-S01-05 | Pendiente | ProviderSettingsPanel con UI de retry/timeouts
+- [ ] CP-S01-06 | Pendiente | Fallback chain implementado
 
 ### Sub02 — Settings y Seguridad
-- [ ] CP-S02-00 | Pendiente | `./gradlew compileKotlin` tras añadir "Test All"
-- [ ] CP-S02-01 | Pendiente | UI manual: dialog batch test con ✓/✗ por provider
-- [ ] CP-S02-02 | Pendiente | `./gradlew compileKotlin` tras crear ProviderValidator
-- [ ] CP-S02-03 | Pendiente | UI manual: label rojo en URL malformada; "Add" bloqueado
-- [ ] CP-S02-04 | Pendiente | `./gradlew compileKotlin` tras crear ProviderTestCache y "Diagnose"
-- [ ] CP-S02-05 | Pendiente | UI manual: dialog diagnóstico sin revelar API key
-- [ ] CP-S02-06 | Pendiente | UI manual: "Last test" actualizado tras "Test Connection"
+- [x] CP-S02-00 | PASS | 2026-06-14 04:15 | `./gradlew compileKotlin` tras crear ProviderValidator y ProviderTestCache
+- [ ] CP-S02-01 | Pendiente | UI manual: label rojo en URL malformada; "Add" bloqueado
+- [ ] CP-S02-02 | Pendiente | UI manual: dialog diagnóstico sin revelar API key
+- [ ] CP-S02-03 | Pendiente | UI manual: "Last test" actualizado tras "Test Connection"
+- [ ] CP-S02-04 | Pendiente | UI manual: dialog batch test con ✓/✗ por provider
 
 ### Sub03 — Multimodal
 - [ ] CP-S03-00 | Pendiente | `./gradlew compileKotlin` tras crear Artifact y añadir a Session

@@ -2,6 +2,7 @@ package com.github.deadizar.aimanager.settings
 
 import com.github.deadizar.aimanager.provider.ProviderCapability
 import com.github.deadizar.aimanager.provider.ProviderConfig
+import com.github.deadizar.aimanager.provider.RetryPolicy
 import com.intellij.credentialStore.CredentialAttributes
 import com.intellij.credentialStore.Credentials
 import com.intellij.ide.passwordSafe.PasswordSafe
@@ -16,6 +17,18 @@ object AiManagerSettings {
         stateService().state.providers.map { it.copy() }
 
     fun getActiveProviderInstanceId(): String = stateService().state.activeProviderInstanceId
+
+    fun getFallbackChain(): List<String> {
+        val state = stateService().state
+        val active = state.activeProviderInstanceId
+        val fallbacks = state.fallbackProviderInstanceIds
+        return (listOf(active) + fallbacks).distinct()
+    }
+
+    fun setFallbackChain(ids: List<String>) {
+        val state = stateService().state
+        state.fallbackProviderInstanceIds = ids
+    }
 
     fun updateProviders(providers: List<AiManagerSettingsState.ProviderEntry>, activeProviderInstanceId: String) {
         val state = stateService().state
@@ -47,6 +60,9 @@ object AiManagerSettings {
                     .mapNotNull { value -> runCatching { ProviderCapability.valueOf(value.trim()) }.getOrNull() }
                     .toSet()
                     .ifEmpty { setOf(ProviderCapability.CHAT) },
+                retryPolicy = RetryPolicy(maxAttempts = entry.maxRetries),
+                connectTimeoutMs = entry.connectTimeoutSec * 1000L,
+                readTimeoutMs = entry.readTimeoutSec * 1000L,
             )
         }
 }

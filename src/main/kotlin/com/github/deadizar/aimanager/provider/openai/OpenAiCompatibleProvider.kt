@@ -9,7 +9,13 @@ import com.github.deadizar.aimanager.provider.ProviderVerification
 
 class OpenAiCompatibleProvider(
     override val config: ProviderConfig,
-    private val client: OpenAiApiClient = OpenAiApiClient(config.baseUrl, config.apiKey),
+    private val client: OpenAiApiClient = OpenAiApiClient(
+        baseUrl = config.baseUrl,
+        apiKey = config.apiKey,
+        retryPolicy = config.retryPolicy,
+        connectTimeoutMs = config.connectTimeoutMs,
+        readTimeoutMs = config.readTimeoutMs,
+    ),
 ) : AiProvider {
 
     init {
